@@ -1,0 +1,22 @@
+﻿  allocator.cpp
+  bx.cpp
+  commandline.cpp
+  debug.cpp
+  dtoa.cpp
+  easing.cpp
+  file.cpp
+  filepath.cpp
+  hash.cpp
+  math.cpp
+  mutex.cpp
+  os.cpp
+  process.cpp
+  semaphore.cpp
+  settings.cpp
+  sort.cpp
+  string.cpp
+  thread.cpp
+  timer.cpp
+  url.cpp
+  Génération de code en cours...
+  bx.vcxproj -> D:\Project Code\ECS_DOOM\Bgfx_ECS_DOOM\build\vs2019\bin\x86\Debug\bx.lib

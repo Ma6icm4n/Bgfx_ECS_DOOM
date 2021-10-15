@@ -1,0 +1,17 @@
+﻿  context.c
+  egl_context.c
+  init.c
+  input.c
+  monitor.c
+  osmesa_context.c
+  vulkan.c
+  wgl_context.c
+  win32_init.c
+  win32_joystick.c
+  win32_monitor.c
+  win32_thread.c
+  win32_time.c
+  win32_window.c
+  window.c
+  Génération de code en cours...
+  glfw.vcxproj -> D:\Project Code\ECS_DOOM\Bgfx_ECS_DOOM\build\vs2019\bin\x86\Debug\glfw.lib

@@ -1,0 +1,15 @@
+﻿  astc_file.cc
+  codec.cc
+  endpoint_codec.cc
+  footprint.cc
+  integer_sequence_codec.cc
+  intermediate_astc_block.cc
+  logical_astc_block.cc
+  partition.cc
+  physical_astc_block.cc
+  quantization.cc
+  weight_infill.cc
+  image.cpp
+  image_gnf.cpp
+  Génération de code en cours...
+  bimg.vcxproj -> D:\Project Code\ECS_DOOM\Bgfx_ECS_DOOM\build\vs2019\bin\x86\Debug\bimg.lib
