@@ -12,12 +12,12 @@ public:
 	template<typename T> 
 	void RegisterComponent() {
 
-		const char* typeName = typeId(T).name();
+		const char* typeName = typeid(T).name();
 		
 		assert(m_componentTypes.find(typeName) == m_componentTypes.end() && "Registering component type more than once");
 
 		m_componentTypes.insert({ typeName, m_nextComponentType });
-		m_ComponentArrays.insert({ typeName, std::make_shared<ComponentArray<T>>() });
+		m_componentArrays.insert({ typeName, std::make_shared<ComponentArray<T>>() });
 
 		++m_nextComponentType;
 
@@ -26,11 +26,17 @@ public:
 	template<typename T>
 	ComponentType GetComponentType() {
 
-		const char* typeName = typeId(T).name();
+		const char* typeName = typeid(T).name();
 
 		assert(m_componentTypes.find(typeName) != m_componentTypes.end() && "Component not registered before use ");
 
 		return m_componentTypes[typeName];
+	}
+
+	template<typename T>
+	void AddComponent(Entity entity, T component)
+	{
+		GetComponentArray<T>()->InsertData(entity, component);
 	}
 
 	template<typename T>
@@ -59,5 +65,17 @@ private:
 	std::unordered_map<const char*, ComponentType> m_componentTypes{};
 	std::unordered_map<const char*, std::shared_ptr<IComponentArray>> m_componentArrays{};
 	ComponentType m_nextComponentType{};
+
+
+	//Cast function to obtain pointer of the componentArray T
+	template<typename T>
+	std::shared_ptr<ComponentArray<T>> GetComponentArray()
+	{
+		const char* typeName = typeid(T).name();
+
+		assert(m_componentTypes.find(typeName) != m_componentTypes.end() && "Component not registered before use");
+
+		return std::static_pointer_cast<ComponentArray<T>>(m_componentArrays[typeName]);
+	}
 
 };

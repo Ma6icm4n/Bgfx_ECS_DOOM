@@ -4,6 +4,16 @@
 #include <iostream>
 #include <sstream>
 
+#include "Gravity.h"
+#include "RigidBody.h"
+#include "Transform.h"
+#include "Coordinator.h"
+#include "PhysicSystem.h"
+#include "RenderSystem.h"
+#include "Time.h"
+#include <chrono>
+#include <random>
+
 #include "bgfx/bgfx.h"
 #include "bgfx/platform.h"
 #include "bx/math.h"
@@ -16,99 +26,79 @@
 #define WIND_WIDTH 1600
 #define WIND_HEIGHT 900
 
-struct PosColorVertex
-{
-    float x;
-    float y;
-    float z;
-    uint32_t abgr;
-};
 
-static PosColorVertex cubeVertices[] =
-{
-    {-1.0f,  1.0f,  1.0f, 0xff000000 },
-    { 1.0f,  1.0f,  1.0f, 0xff0000ff },
-    {-1.0f, -1.0f,  1.0f, 0xff00ff00 },
-    { 1.0f, -1.0f,  1.0f, 0xff00ffff },
-    {-1.0f,  1.0f, -1.0f, 0xffff0000 },
-    { 1.0f,  1.0f, -1.0f, 0xffff00ff },
-    {-1.0f, -1.0f, -1.0f, 0xffffff00 },
-    { 1.0f, -1.0f, -1.0f, 0xffffffff },
-};
-
-static const uint16_t cubeTriList[] =
-{
-    0, 1, 2,
-    1, 3, 2,
-    4, 6, 5,
-    5, 6, 7,
-    0, 2, 4,
-    4, 2, 6,
-    1, 5, 3,
-    5, 7, 3,
-    0, 4, 1,
-    4, 5, 1,
-    2, 3, 6,
-    6, 3, 7,
-};
-
-//################# UTILS (will be moved in interface class) ################
-
-bgfx::ShaderHandle loadShader(const char* filename) {
-    const char* shaderPath = "???";
-
-    switch (bgfx::getRendererType()) {
-    case bgfx::RendererType::Noop:
-    case bgfx::RendererType::Direct3D9:  shaderPath = "../../externals/bgfx/examples/runtime/shaders/dx9/";   break;
-    case bgfx::RendererType::Direct3D11:
-    case bgfx::RendererType::Direct3D12: shaderPath = "../../externals/bgfx/examples/runtime/shaders/dx11/";  break;
-    case bgfx::RendererType::Gnm:        shaderPath = "../../externals/bgfx/examples/runtime/shaders/pssl/";  break;
-    case bgfx::RendererType::Metal:      shaderPath = "../../externals/bgfx/examples/runtime/shaders/metal/"; break;
-    case bgfx::RendererType::OpenGL:     shaderPath = "../../externals/bgfx/examples/runtime/shaders/glsl/";  break;
-    case bgfx::RendererType::OpenGLES:   shaderPath = "../../externals/bgfx/examples/runtime/shaders/essl/";  break;
-    case bgfx::RendererType::Vulkan:     shaderPath = "../../externals/bgfx/examples/runtime/shaders/spirv/"; break;
-    }
-
-    size_t shaderLen = strlen(shaderPath);
-    size_t fileLen = strlen(filename);
-    char* filePath = (char*)calloc(1, shaderLen + fileLen + 1);
-    memcpy(filePath, shaderPath, shaderLen);
-    memcpy(&filePath[shaderLen], filename, fileLen);
-
-    FILE* file = fopen(filePath, "rb");
-    fseek(file, 0, SEEK_END);
-    long fileSize = ftell(file);
-    fseek(file, 0, SEEK_SET);
-
-    const bgfx::Memory* mem = bgfx::alloc(fileSize + 1);
-    fread(mem->data, 1, fileSize, file);
-    mem->data[mem->size - 1] = '\0';
-    fclose(file);
-
-    return bgfx::createShader(mem);
-}
+Coordinator gCoordinator;
 
 int main(void) {
+
+
+    gCoordinator.Init();
 
     Window window;
     window.Init("DOOM-ECS", WIND_WIDTH, WIND_HEIGHT, 0, 0);
 
+    gCoordinator.RegisterComponent<Gravity>();
+    gCoordinator.RegisterComponent<RigidBody>();
+    gCoordinator.RegisterComponent<Transform>();
 
-//########## Create Cube (will be moved in component) #############
-    bgfx::VertexLayout pcvDecl;
-    pcvDecl.begin().add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-        .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-        .end();
-    bgfx::VertexBufferHandle vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, sizeof(cubeVertices)), pcvDecl);
-    bgfx::IndexBufferHandle ibh = bgfx::createIndexBuffer(bgfx::makeRef(cubeTriList, sizeof(cubeTriList)));
-    bgfx::ShaderHandle vsh = loadShader("vs_cubes.bin");
-    bgfx::ShaderHandle fsh = loadShader("fs_cubes.bin");
-    bgfx::ProgramHandle program = bgfx::createProgram(vsh, fsh, true);
+    auto physicsSystem = gCoordinator.RegisterSystem<PhysicsSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<Gravity>());
+        signature.set(gCoordinator.GetComponentType<RigidBody>());
+        signature.set(gCoordinator.GetComponentType<Transform>());
+        gCoordinator.SetSystemSignature<PhysicsSystem>(signature);
+    }
 
-	unsigned int counter = 0;
+    physicsSystem->Init();
+    
+    auto renderSystem = gCoordinator.RegisterSystem<RenderSystem>();
+    renderSystem->Init();
+    
+    std::vector<Entity> entities(MAX_ENTITIES - 1);
 
-	while (true) {
-//######### CAMERA AND INSTANCIATION BUFFER #############
+    std::default_random_engine generator;
+    std::uniform_real_distribution<float> randPosition(-100.0f, 100.0f);
+    std::uniform_real_distribution<float> randRotation(0.0f, 3.0f);
+    std::uniform_real_distribution<float> randScale(3.0f, 5.0f);
+    std::uniform_real_distribution<float> randColor(0.0f, 1.0f);
+    std::uniform_real_distribution<float> randGravity(-10.0f, -1.0f);
+
+    float scale = randScale(generator);
+    
+
+    for(auto & entity : entities) {
+        entity = gCoordinator.CreateEntity();
+
+        float gravity[3] = { 0.0f, randGravity(generator), 0.0f };
+        gCoordinator.AddComponent(entity, Gravity{ *gravity });
+
+        float basevelocity[3] = { 0.0f, 0.0f, 0.0f };
+        float baseacceleration[3] = { 0.0f, 0.0f, 0.0f };
+        gCoordinator.AddComponent(entity,
+             RigidBody{
+                *basevelocity,
+                *baseacceleration
+            }
+        );
+
+        float baseposition[3] = { randPosition(generator), randPosition(generator), randPosition(generator) };
+        float baserotation[3] = { randRotation(generator), randRotation(generator), randRotation(generator) };
+        float basescale[3] = { scale, scale, scale };
+        gCoordinator.AddComponent(entity,
+            Transform{
+                *baseposition,
+                *baserotation,
+                *basescale
+            }
+         );
+
+    }
+    
+    float time = Time::getTime();
+    while (true) {
+
+        float time = Time::getTime();
 
         const bx::Vec3 at = { 0.0f, 0.0f,  0.0f };
         const bx::Vec3 eye = { 0.0f, 0.0f, -5.0f };
@@ -117,27 +107,18 @@ int main(void) {
         float proj[16];
         bx::mtxProj(proj, 60.0f, float(WIND_WIDTH) / float(WIND_HEIGHT), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
         bgfx::setViewTransform(0, view, proj);
+        
+        
+        renderSystem->Update(time);
+        bgfx::frame();
 
-        bgfx::setVertexBuffer(0, vbh);
-        bgfx::setIndexBuffer(ibh);
+    }
 
-        bgfx::setViewTransform(0, view, proj);
-        float mtx[16];
-        bx::mtxRotateXY(mtx, counter * 0.01f, counter * 0.01f);
-        bgfx::setTransform(mtx);
-
-        window.Update();
-
-        bgfx::submit(0, program);
-		bgfx::frame();
-		counter++;
-	}
-
-    bgfx::destroy(ibh);
-    bgfx::destroy(vbh);
+    renderSystem->Destroy();
     bgfx::shutdown();
     window.Shutdown();
+    glfwTerminate();
 
-
-	return 0;
+    return 0;
 }
+
