@@ -58,7 +58,7 @@ int main(void) {
     std::vector<Entity> entities(MAX_ENTITIES - 1);
 
     std::default_random_engine generator;
-    std::uniform_real_distribution<float> randPosition(-100.0f, 100.0f);
+    std::uniform_real_distribution<float> randPosition(-200.0f, 500.0f);
     std::uniform_real_distribution<float> randRotation(0.0f, 3.0f);
     std::uniform_real_distribution<float> randScale(3.0f, 5.0f);
     std::uniform_real_distribution<float> randColor(0.0f, 1.0f);
@@ -108,7 +108,7 @@ int main(void) {
         bx::mtxProj(proj, 60.0f, float(WIND_WIDTH) / float(WIND_HEIGHT), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
         bgfx::setViewTransform(0, view, proj);
         
-        
+        physicsSystem->Update(time);
         renderSystem->Update(time);
         bgfx::frame();
 

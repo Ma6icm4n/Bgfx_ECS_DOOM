@@ -10,6 +10,7 @@ extern Coordinator gCoordinator;
 void PhysicsSystem::Init() {}
 
 void PhysicsSystem::Update(float dt) {
+
 	for (auto const& entity : m_Entities) {
 
 		auto& rigidBody = gCoordinator.GetComponent<RigidBody>(entity);
