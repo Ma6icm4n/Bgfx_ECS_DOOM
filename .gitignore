@@ -163,3 +163,12 @@ build/vs2019/Engine.vcxproj.filters
 build/vs2019/obj/x86/Debug/Engine/Engine.ilk
 build/vs2019/obj/x86/Debug/Engine/Engine.log
 build/vs2019/obj/x86/Debug/Engine/vc142.pdb
+build/vs2019/.vs/ECS_DOOM/v16/ipch/AutoPCH/51fa819c3af07132/MAIN.ipch
+build/vs2019/.vs/ECS_DOOM/v16/ipch/AutoPCH/8d264b7c4190170c/COMPONENTMANAGER.ipch
+build/vs2019/.vs/ECS_DOOM/v16/ipch/AutoPCH/a30f61a658c46a33/WINDOW.ipch
+build/vs2019/bin/x86/Debug/Engine.exe
+build/vs2019/bin/x86/Debug/Engine.pdb
+build/vs2019/Engine.vcxproj.filters
+build/vs2019/obj/x86/Debug/Engine/Engine.ilk
+build/vs2019/obj/x86/Debug/Engine/Engine.log
+build/vs2019/obj/x86/Debug/Engine/vc142.pdb
