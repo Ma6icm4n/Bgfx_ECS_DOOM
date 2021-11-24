@@ -7,6 +7,7 @@
 #include "Gravity.h"
 #include "RigidBody.h"
 #include "Transform.h"
+#include "Renderable.h"
 #include "Coordinator.h"
 #include "PhysicSystem.h"
 #include "RenderSystem.h"
@@ -40,6 +41,7 @@ int main(void) {
     gCoordinator.RegisterComponent<Gravity>();
     gCoordinator.RegisterComponent<RigidBody>();
     gCoordinator.RegisterComponent<Transform>();
+    gCoordinator.RegisterComponent<Renderable>();
 
     auto physicsSystem = gCoordinator.RegisterSystem<PhysicsSystem>();
     {
@@ -53,6 +55,12 @@ int main(void) {
     physicsSystem->Init();
     
     auto renderSystem = gCoordinator.RegisterSystem<RenderSystem>();
+    {
+        Signature signature;
+        //signature.set(gCoordinator.GetComponentType<Renderable>());
+        signature.set(gCoordinator.GetComponentType<Transform>());
+        gCoordinator.SetSystemSignature<RenderSystem>(signature);
+    }
     renderSystem->Init();
     
     std::vector<Entity> entities(MAX_ENTITIES - 1);
@@ -101,7 +109,7 @@ int main(void) {
         float time = Time::getTime();
 
         const bx::Vec3 at = { 0.0f, 0.0f,  0.0f };
-        const bx::Vec3 eye = { 0.0f, 0.0f, -5.0f };
+        const bx::Vec3 eye = { 10.0f, 30.0f, -80.0f };
         float view[16];
         bx::mtxLookAt(view, eye, at);
         float proj[16];

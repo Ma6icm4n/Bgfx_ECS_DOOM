@@ -119,13 +119,6 @@ void RenderSystem::Destroy() {
 
 void RenderSystem::Update(float dt) {
 
-    const bx::Vec3 at = { 0.0f, 0.0f,  0.0f };
-    const bx::Vec3 eye = { 10.0f, 30.0f, -80.0f };
-    float view[16];
-    bx::mtxLookAt(view, eye, at);
-    float proj[16];
-    bx::mtxProj(proj, 60.0f, float(WIND_WIDTH) / float(WIND_HEIGHT), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
-    bgfx::setViewTransform(0, view, proj);
 
     for (auto const& entity : m_Entities) {
 
@@ -149,9 +142,9 @@ void RenderSystem::Update(float dt) {
         mtx[9] = rotation[9];
         mtx[10] = rotation[10];
         mtx[11] = rotation[11];
-        mtx[12] = rotation[12] + translate[12];
-        mtx[13] = rotation[13] + translate[13] * 10;
-        mtx[14] = rotation[14] + translate[14];
+        mtx[12] = translate[12];
+        mtx[13] = translate[13] * 10;
+        mtx[14] = translate[14];
         mtx[15] =  1.0f;
         bgfx::setTransform(mtx);
         bgfx::setVertexBuffer(0, vbh);

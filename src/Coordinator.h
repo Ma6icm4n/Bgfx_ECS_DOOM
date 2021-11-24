@@ -46,6 +46,7 @@ public:
 
 		auto signature = m_EntityManager->GetSignature(entity);
 		signature.set(m_ComponentManager->GetComponentType<T>(), true);
+		m_EntityManager->SetSignature(entity, signature);
 		m_SystemManager->EntitySignatureChanged(entity, signature);
 
 	}

@@ -2,10 +2,35 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="..\..\src\Main.cpp" />
+    <ClCompile Include="..\..\src\Window.cpp" />
+    <ClCompile Include="..\..\src\PhysicSystem.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RenderSystem.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Shader.cpp">
+      <Filter>Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Time.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
       <UniqueIdentifier>{c67de768-c166-4947-8ce6-c156220ed5f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components">
+      <UniqueIdentifier>{6c832b48-ed58-46fa-bce5-397783e155b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System">
+      <UniqueIdentifier>{9c354e2e-4869-434f-a283-a8806eba0ef8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{01375de8-2a69-456f-be0e-76d7e03dbc31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{11633f75-fdef-41b5-9fcf-0fc966f69e51}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -35,6 +60,43 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Types.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Window.h" />
+    <ClInclude Include="..\..\src\Gravity.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RigidBody.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Transform.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\PhysicSystem.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Renderable.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RenderSystem.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Shader.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Time.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Mat44.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Vec3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Vec4.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Maths.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
