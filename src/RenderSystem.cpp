@@ -127,7 +127,7 @@ void RenderSystem::Update(float dt) {
         float translate[16];
         float scale[16];
         float mtx[16];
-        bx::mtxRotateXY(rotation, dt * transform.rotation[0], dt* transform.rotation[1]);
+        bx::mtxRotateXY(rotation, dt, dt);
         bx::mtxTranslate(translate, transform.position[0], transform.position[1], transform.position[2]);
         bx::mtxScale(scale, transform.scale[0], transform.scale[1], transform.scale[2]);
         mtx[0] = rotation[0];
