@@ -20,7 +20,7 @@ void PhysicsSystem::Update(float dt) {
 		auto const& gravity = gCoordinator.GetComponent<Gravity>(entity);
 
 		rigidBody.velocity[0] += gravity.force[0] * dt;
-		rigidBody.velocity[1] += gravity.force[1] * (dt/10000);
+		rigidBody.velocity[1] += gravity.force[1] * dt;
 		rigidBody.velocity[2] += gravity.force[2] * dt;
 
 		transform.position[0] += rigidBody.velocity[0] * dt;

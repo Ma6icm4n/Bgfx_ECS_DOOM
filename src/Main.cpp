@@ -66,11 +66,11 @@ int main(void) {
     std::vector<Entity> entities(MAX_ENTITIES - 1);
 
     std::default_random_engine generator;
-    std::uniform_real_distribution<float> randPosition(-10.0f, 20.0f);
+    std::uniform_real_distribution<float> randPosition(-200.0f, 500.0f);
     std::uniform_real_distribution<float> randRotation(0.0f, 3.0f);
     std::uniform_real_distribution<float> randScale(3.0f, 5.0f);
     std::uniform_real_distribution<float> randColor(0.0f, 1.0f);
-    std::uniform_real_distribution<float> randGravity(-0.5f, -0.1f);
+    std::uniform_real_distribution<float> randGravity(-10.0f, -1.0f);
 
     float scale = randScale(generator);
     
@@ -79,7 +79,7 @@ int main(void) {
         entity = gCoordinator.CreateEntity();
 
         float gravity[3] = { 0.0f, randGravity(generator), 0.0f };
-        gCoordinator.AddComponent(entity, Gravity{ 0.0f, gravity[1] });
+        gCoordinator.AddComponent(entity, Gravity{ *gravity });
 
         float basevelocity[3] = { 0.0f, 0.0f, 0.0f };
         float baseacceleration[3] = { 0.0f, 0.0f, 0.0f };
@@ -95,9 +95,9 @@ int main(void) {
         float basescale[3] = { scale, scale, scale };
         gCoordinator.AddComponent(entity,
             Transform{
-                baseposition[0], baseposition[1], baseposition[2],
-                baserotation[0],baserotation[1], baserotation[2],
-                basescale[0], basescale[1], basescale[2]
+                *baseposition,
+                *baserotation,
+                *basescale
             }
          );
 
