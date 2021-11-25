@@ -3,6 +3,5 @@
   RenderSystem.cpp
 D:\Project Code\ECS_DOOM\Bgfx_ECS_DOOM\src\RenderSystem.cpp(71,18): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   Génération de code en cours...
-  LINK : bin\x86\Debug\Engine.exe introuvable ou non généré par la dernière édition de liens incrémentielle ; édition de liens complète en cours
      Création de la bibliothèque bin\x86\Debug\Engine.lib et de l'objet bin\x86\Debug\Engine.exp
   Engine.vcxproj -> D:\Project Code\ECS_DOOM\Bgfx_ECS_DOOM\build\vs2019\bin\x86\Debug\Engine.exe
