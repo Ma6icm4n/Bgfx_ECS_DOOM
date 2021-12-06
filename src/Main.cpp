@@ -11,6 +11,8 @@
 #include "Coordinator.h"
 #include "PhysicSystem.h"
 #include "RenderSystem.h"
+#include "ControlSystem.h"
+#include "Camera.h"
 #include "Time.h"
 #include <chrono>
 #include <random>
@@ -29,6 +31,11 @@
 
 
 Coordinator gCoordinator;
+static bool quit = false;
+
+void QuitHandler(Event& event) {
+    quit = true;
+}
 
 int main(void) {
 
@@ -38,10 +45,13 @@ int main(void) {
     Window window;
     window.Init("DOOM-ECS", WIND_WIDTH, WIND_HEIGHT, 0, 0);
 
+    gCoordinator.AddEventListener(FUNCTION_LISTENER(Events::Window::QUIT, QuitHandler));
+
     gCoordinator.RegisterComponent<Gravity>();
     gCoordinator.RegisterComponent<RigidBody>();
     gCoordinator.RegisterComponent<Transform>();
     gCoordinator.RegisterComponent<Renderable>();
+    gCoordinator.RegisterComponent<Camera>();
 
     auto physicsSystem = gCoordinator.RegisterSystem<PhysicsSystem>();
     {
@@ -58,12 +68,19 @@ int main(void) {
     {
         Signature signature;
         //signature.set(gCoordinator.GetComponentType<Renderable>());
-        signature.set(gCoordinator.GetComponentType<Gravity>());
-        signature.set(gCoordinator.GetComponentType<RigidBody>());
         signature.set(gCoordinator.GetComponentType<Transform>());
         gCoordinator.SetSystemSignature<RenderSystem>(signature);
     }
     renderSystem->Init();
+
+    auto controlSystem = gCoordinator.RegisterSystem<ControlSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<Camera>());
+        signature.set(gCoordinator.GetComponentType<Transform>());
+        gCoordinator.SetSystemSignature<ControlSystem>(signature);
+    }
+    controlSystem->Init();
     
     std::vector<Entity> entities(MAX_ENTITIES - 1);
 
@@ -75,6 +92,7 @@ int main(void) {
     std::uniform_real_distribution<float> randGravity(-0.5f, -0.1f);
 
     float scale = randScale(generator);
+
     
 
     for(auto & entity : entities) {
@@ -106,7 +124,7 @@ int main(void) {
     }
     
     float time = Time::getTime();
-    while (true) {
+    while (!quit) {
 
         float time = Time::getTime();
 
@@ -117,9 +135,14 @@ int main(void) {
         float proj[16];
         bx::mtxProj(proj, 60.0f, float(WIND_WIDTH) / float(WIND_HEIGHT), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
         bgfx::setViewTransform(0, view, proj);
-        
+
+        unsigned int input = window.ProcessEvents();
+        controlSystem->Update(time, input);
         physicsSystem->Update(time);
         renderSystem->Update(time);
+
+        window.Update();
+
         bgfx::frame();
 
     }

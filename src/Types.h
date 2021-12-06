@@ -47,8 +47,8 @@ enum class InputButtons {
 using EventId = std::uint32_t;
 using ParamId = std::uint32_t;
 
-#define METHOD_LISTENER(EventType, Listener) EventType, std::bind(&Listener, this, std::placeholders::_1);
-#define FUNCTION_LISTENER(EventType, Listener) EventType, std::bind(&Listener, std::placeholders::_1);
+#define METHOD_LISTENER(EventType, Listener) EventType, std::bind(&Listener, this, std::placeholders::_1)
+#define FUNCTION_LISTENER(EventType, Listener) EventType, std::bind(&Listener, std::placeholders::_1)
 
 namespace Events::Window {
 	const EventId QUIT = "Events::Window::QUIT"_hash;

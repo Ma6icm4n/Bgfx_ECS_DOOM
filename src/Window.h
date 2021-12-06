@@ -18,12 +18,12 @@ public :
 	void Init(string const& windowTitle, unsigned int windowWidth, unsigned int windowHeight, unsigned int windowPositonX, unsigned int windowPositionY);
 
 	void Update();
-//plus tard	void ProcessEvents();
+	unsigned int ProcessEvents();
 	void Shutdown();
 
 private:
 
 	GLFWwindow* m_window;
 
-	std::bitset<8> m_buttons;
+	unsigned int m_buttons;
 };

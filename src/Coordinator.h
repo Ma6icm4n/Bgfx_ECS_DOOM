@@ -3,6 +3,7 @@
 #include "ComponentManager.h"
 #include "EntityManager.h"
 #include "SystemManager.h"
+#include "EventManager.h"
 
 #include "Types.h"
 #include <memory>
@@ -15,6 +16,7 @@ public:
 		m_ComponentManager = std::make_unique<ComponentManager>();
 		m_EntityManager = std::make_unique<EntityManager>();
 		m_SystemManager = std::make_unique<SystemManager>();
+		m_EventManager = std::make_unique<EventManager>();
 
 	}
 
@@ -87,6 +89,19 @@ public:
 
 
 
+//################### EVENTS METHODS ##################
+	void AddEventListener(EventId eventId, std::function<void(Event&)> const& listener) {
+		m_EventManager->AddListener(eventId, listener);
+	}
+
+	void SendEvent(Event& event) {
+		m_EventManager->SendEvent(event);
+	}
+
+	void SendEvent(EventId eventId) {
+		m_EventManager->SendEvent(eventId);
+	}
+
 
 
 
@@ -94,7 +109,8 @@ private:
 
 	//get pointer for all manager class
 	std::unique_ptr<ComponentManager> m_ComponentManager;
-	std::unique_ptr<SystemManager> m_SystemManager;
 	std::unique_ptr<EntityManager> m_EntityManager;
-//	std::unique_ptr<EventManager> m_EventManager;
+	std::unique_ptr<EventManager> m_EventManager;
+	std::unique_ptr<SystemManager> m_SystemManager;
+	
 };

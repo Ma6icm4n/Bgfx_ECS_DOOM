@@ -1,6 +1,14 @@
 #include "Window.h"
 
 #include <iostream>
+#include "Coordinator.h"
+#include "ControlSystem.h"
+
+#include "ControlSystem.h"
+#include "Camera.h"
+#include "Transform.h"
+
+extern Coordinator gCoordinator;
 
 void Window::Init(string const& windowTitle, unsigned int windowWidth, unsigned int windowHeight, unsigned int windowPositionX, unsigned int windowPositionY) {
 	
@@ -48,4 +56,53 @@ void Window::Shutdown() {
 	
 	glfwDestroyWindow(m_window);
 	glfwTerminate();
+}
+
+// ################### WINDOW EVENTS ######################
+
+unsigned int Window::ProcessEvents() {
+	glfwPollEvents();
+
+	bool buttonStateChanged = true;
+
+	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE)) {
+		gCoordinator.SendEvent(Events::Window::QUIT);
+	}
+	else if (glfwGetKey(m_window, GLFW_KEY_W))
+	{
+
+		m_buttons = 1;
+	}
+	else if (glfwGetKey(m_window, GLFW_KEY_A))
+	{
+		m_buttons = 2;
+	}
+	else if (glfwGetKey(m_window, GLFW_KEY_S))
+	{
+		m_buttons = 3;
+	}
+	else if (glfwGetKey(m_window, GLFW_KEY_D))
+	{
+		m_buttons = 4;
+	}
+	else if (glfwGetKey(m_window, GLFW_KEY_Q))
+	{
+		m_buttons = 5 ;
+	}
+	else if (glfwGetKey(m_window, GLFW_KEY_E))
+	{
+		m_buttons = 6;
+	}
+	else
+	{
+		buttonStateChanged = false;
+	}
+
+	if (buttonStateChanged)
+	{
+		Event event(Events::Window::INPUT);
+		event.SetParam(Events::Window::Input::INPUT, m_buttons);
+		gCoordinator.SendEvent(event);
+		return m_buttons;
+	}
 }
