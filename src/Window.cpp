@@ -62,7 +62,6 @@ void Window::Shutdown() {
 
 unsigned int Window::ProcessEvents() {
 	glfwPollEvents();
-
 	bool buttonStateChanged = true;
 
 	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE)) {
@@ -70,7 +69,6 @@ unsigned int Window::ProcessEvents() {
 	}
 	else if (glfwGetKey(m_window, GLFW_KEY_W))
 	{
-
 		m_buttons = 1;
 	}
 	else if (glfwGetKey(m_window, GLFW_KEY_A))
@@ -92,6 +90,9 @@ unsigned int Window::ProcessEvents() {
 	else if (glfwGetKey(m_window, GLFW_KEY_E))
 	{
 		m_buttons = 6;
+	}
+	else if (glfwGetKey(m_window, GLFW_MOUSE_BUTTON_LEFT)) {
+		m_buttons = 7;
 	}
 	else
 	{

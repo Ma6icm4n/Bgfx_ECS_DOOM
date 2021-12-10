@@ -7,25 +7,30 @@
 #include <unordered_map>
 
 
-
-class EventManager {
+class EventManager
+{
 public:
-	void AddListener(EventId eventId, std::function<void(Event&)> const& listener){
+	void AddListener(EventId eventId, std::function<void(Event&)> const& listener)
+	{
 		listeners[eventId].push_back(listener);
 	}
 
-	void SendEvent(Event& event) {
+	void SendEvent(Event& event)
+	{
 		uint32_t type = event.GetType();
 
-		for (auto const& listener : listeners[type]) {
+		for (auto const& listener : listeners[type])
+		{
 			listener(event);
 		}
 	}
 
-	void SendEvent(EventId eventId) {
+	void SendEvent(EventId eventId)
+	{
 		Event event(eventId);
 
-		for (auto const& listener : listeners[eventId]) {
+		for (auto const& listener : listeners[eventId])
+		{
 			listener(event);
 		}
 	}

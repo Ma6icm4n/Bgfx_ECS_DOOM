@@ -63,6 +63,15 @@ int main(void) {
     }
 
     physicsSystem->Init();
+
+    auto controlSystem = gCoordinator.RegisterSystem<ControlSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<Transform>());
+        signature.set(gCoordinator.GetComponentType<Camera>());
+        gCoordinator.SetSystemSignature<ControlSystem>(signature);
+    }
+    controlSystem->Init();
     
     auto renderSystem = gCoordinator.RegisterSystem<RenderSystem>();
     {
@@ -73,14 +82,7 @@ int main(void) {
     }
     renderSystem->Init();
 
-    auto controlSystem = gCoordinator.RegisterSystem<ControlSystem>();
-    {
-        Signature signature;
-        signature.set(gCoordinator.GetComponentType<Camera>());
-        signature.set(gCoordinator.GetComponentType<Transform>());
-        gCoordinator.SetSystemSignature<ControlSystem>(signature);
-    }
-    controlSystem->Init();
+    
     
     std::vector<Entity> entities(MAX_ENTITIES - 1);
 
@@ -96,6 +98,8 @@ int main(void) {
     
 
     for(auto & entity : entities) {
+
+
         entity = gCoordinator.CreateEntity();
 
         float gravity[3] = { 0.0f, randGravity(generator), 0.0f };
@@ -128,18 +132,11 @@ int main(void) {
 
         float time = Time::getTime();
 
-        const bx::Vec3 at = { 0.0f, 0.0f,  0.0f };
-        const bx::Vec3 eye = { 10.0f, 30.0f, -80.0f };
-        float view[16];
-        bx::mtxLookAt(view, eye, at);
-        float proj[16];
-        bx::mtxProj(proj, 60.0f, float(WIND_WIDTH) / float(WIND_HEIGHT), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
-        bgfx::setViewTransform(0, view, proj);
-
         unsigned int input = window.ProcessEvents();
         controlSystem->Update(time, input);
         physicsSystem->Update(time);
         renderSystem->Update(time);
+        
 
         window.Update();
 

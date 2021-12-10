@@ -20,7 +20,7 @@ constexpr std::uint32_t operator "" _hash(char const* s, std::size_t count) {
 //Entity alias as an id
 using Entity = std::uint32_t;
 //Max Entity alias in your Program size of the array
-const Entity MAX_ENTITIES = 1000  ;
+const Entity MAX_ENTITIES = 10000  ;
 
 //Component unique ID
 using ComponentType = std::uint8_t;
@@ -33,13 +33,13 @@ using Signature = std::bitset<MAX_COMPONENTS>;
 
 //############### INPUT AND EVENT NOT DEFINITIVE ##################
 
-enum class InputButtons {
-
-	W, 
-	A, 
-	S, 
-	D, 
-	Q, 
+enum class InputButtons
+{
+	W,
+	A,
+	S,
+	D,
+	Q,
 	E
 };
 

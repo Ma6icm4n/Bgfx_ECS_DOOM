@@ -6,6 +6,8 @@
 #include "bx/math.h"
 #include <memory>
 
+class Event;
+
 class RenderSystem : public System {
 public:
 
@@ -13,6 +15,10 @@ public:
 	void Update(float dt);
     void Destroy();
 private:
+
+    //void WindowSizeListener(Event& event);
+
+    Entity m_camera;
 
     bgfx::VertexBufferHandle vbh;
     bgfx::IndexBufferHandle ibh;

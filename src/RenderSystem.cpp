@@ -3,6 +3,8 @@
 #include "Renderable.h"
 #include "Transform.h"
 #include "Coordinator.h"
+#include "Camera.h"
+#include "Transform.h"
 
 #include <cmath>
 
@@ -10,6 +12,8 @@
 #include "bgfx/platform.h"
 #include "bx/math.h"
 #include <string>
+#include <iostream>
+#include <bitset>
 
 struct PosColorVertex
 {
@@ -90,6 +94,24 @@ extern Coordinator gCoordinator;
 void RenderSystem::Init()
 {
 
+    m_camera = gCoordinator.CreateEntity();
+
+    gCoordinator.AddComponent(
+        m_camera,
+        Transform{
+            0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            1.0f, 1.0f, 1.0f
+        }
+    );
+
+    gCoordinator.AddComponent(
+        m_camera,
+        Camera{
+            .projectionTransform = Camera::MakeProjectionTransform(WIND_WIDTH, WIND_HEIGHT)
+        }
+    );
+
     bgfx::Init bgfxInit;
     bgfxInit.type = bgfx::RendererType::Count;
     bgfxInit.resolution.width = WIND_WIDTH;
@@ -120,9 +142,18 @@ void RenderSystem::Destroy() {
 void RenderSystem::Update(float dt) {
 
 
+    auto& cameraTranform = gCoordinator.GetComponent<Transform>(m_camera);
+    auto& camera = gCoordinator.GetComponent<Camera>(m_camera);
+
     for (auto const& entity : m_Entities) {
 
         auto const& transform = gCoordinator.GetComponent<Transform>(entity);
+
+        const bx::Vec3 at = { 0.0f, 0.0f,  0.0f };
+        const bx::Vec3 eye = { 10.0f, 30.0f, -80.0f };
+        float view[16];
+        bx::mtxLookAt(view, eye, at);
+
         float rotation[16];
         float translate[16];
         float scale[16];
@@ -146,6 +177,29 @@ void RenderSystem::Update(float dt) {
         mtx[13] = translate[13] * 10;
         mtx[14] = translate[14];
         mtx[15] =  1.0f;
+
+
+        float projection[16];
+        projection[0] = camera.projectionTransform[0];
+        projection[1] = camera.projectionTransform[1];
+        projection[2] = camera.projectionTransform[2];
+        projection[3] = camera.projectionTransform[3];
+        projection[4] = camera.projectionTransform[4];
+        projection[5] = camera.projectionTransform[5];
+        projection[6] = camera.projectionTransform[6];
+        projection[7] = camera.projectionTransform[7];
+        projection[8] = camera.projectionTransform[8];
+        projection[9] = camera.projectionTransform[9];
+        projection[10] = camera.projectionTransform[10];
+        projection[11] = camera.projectionTransform[11];
+        projection[12] = camera.projectionTransform[12];
+        projection[13] = camera.projectionTransform[13];
+        projection[14] = camera.projectionTransform[14];
+        projection[15] = camera.projectionTransform[15];
+        bx::mtxProj(projection, 60.0f, float(WIND_WIDTH) / float(WIND_HEIGHT), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
+        bgfx::setViewTransform(0, view, projection);
+
+
         bgfx::setTransform(mtx);
         bgfx::setVertexBuffer(0, vbh);
         bgfx::setIndexBuffer(ibh);

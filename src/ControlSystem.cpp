@@ -4,6 +4,7 @@
 #include "Coordinator.h"
 #include "Acceleration.h"
 #include <bitset>
+#include <iostream>
 
 extern Coordinator gCoordinator;
 
@@ -13,10 +14,9 @@ void ControlSystem::Init() {
 
 void ControlSystem::Update(float dt, unsigned int input) {
 	for (auto& entity : m_Entities) {
-
 		auto transform = gCoordinator.GetComponent<Transform>(entity);
 
-		float speed = 20.0f;
+		float speed = 200.0f;
 
 		if (input == 1)
 		{
