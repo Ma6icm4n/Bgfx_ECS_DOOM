@@ -96,11 +96,13 @@ void RenderSystem::Init()
 
     m_camera = gCoordinator.CreateEntity();
 
+    float rotation[3] = { 0.0f, 60.0f, -40.0f };
+
     gCoordinator.AddComponent(
         m_camera,
         Transform{
-            0.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 0.0f,
+            0.0, 0.0f, -50.0f,
+            0.0f, 20.0f, -40.0f,
             1.0f, 1.0f, 1.0f
         }
     );
@@ -108,7 +110,8 @@ void RenderSystem::Init()
     gCoordinator.AddComponent(
         m_camera,
         Camera{
-            .projectionTransform = Camera::MakeProjectionTransform(WIND_WIDTH, WIND_HEIGHT)
+            .projectionTransform = Camera::MakeProjectionTransform(WIND_WIDTH, WIND_HEIGHT),
+            .forward = Camera::GetForwardVector(rotation[0], rotation[1], rotation[2])
         }
     );
 
@@ -142,16 +145,21 @@ void RenderSystem::Destroy() {
 void RenderSystem::Update(float dt) {
 
 
-    auto& cameraTranform = gCoordinator.GetComponent<Transform>(m_camera);
+    auto& cameraTransform = gCoordinator.GetComponent<Transform>(m_camera);
     auto& camera = gCoordinator.GetComponent<Camera>(m_camera);
 
     for (auto const& entity : m_Entities) {
 
         auto const& transform = gCoordinator.GetComponent<Transform>(entity);
-
-        const bx::Vec3 at = { 0.0f, 0.0f,  0.0f };
-        const bx::Vec3 eye = { 10.0f, 30.0f, -80.0f };
+        
+        const bx::Vec3 eye = { cameraTransform.position[0], cameraTransform.position[1], cameraTransform.position[2] };
+        //std::cout << cameraTransform.position[0] << " , " << cameraTransform.position[1] << " , " << cameraTransform.position[2] << std::endl;;
+        const bx::Vec3 at = { eye.x + camera.forward[0], eye.y  + camera.forward[1], eye.z + camera.forward[2] };
+        
         float view[16];
+        view[2] = -cameraTransform.position[0];
+        view[5] = -cameraTransform.position[1];
+        view[8] = -cameraTransform.position[2];
         bx::mtxLookAt(view, eye, at);
 
         float rotation[16];
@@ -196,7 +204,7 @@ void RenderSystem::Update(float dt) {
         projection[13] = camera.projectionTransform[13];
         projection[14] = camera.projectionTransform[14];
         projection[15] = camera.projectionTransform[15];
-        bx::mtxProj(projection, 60.0f, float(WIND_WIDTH) / float(WIND_HEIGHT), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
+        bgfx::setViewRect(0, 0, 0, uint16_t(WIND_WIDTH), uint16_t(WIND_HEIGHT));
         bgfx::setViewTransform(0, view, projection);
 
 

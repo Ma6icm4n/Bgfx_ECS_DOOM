@@ -76,7 +76,7 @@ int main(void) {
     auto renderSystem = gCoordinator.RegisterSystem<RenderSystem>();
     {
         Signature signature;
-        //signature.set(gCoordinator.GetComponentType<Renderable>());
+        signature.set(gCoordinator.GetComponentType<Renderable>());
         signature.set(gCoordinator.GetComponentType<Transform>());
         gCoordinator.SetSystemSignature<RenderSystem>(signature);
     }
@@ -87,7 +87,7 @@ int main(void) {
     std::vector<Entity> entities(MAX_ENTITIES - 1);
 
     std::default_random_engine generator;
-    std::uniform_real_distribution<float> randPosition(-10.0f, 20.0f);
+    std::uniform_real_distribution<float> randPosition(-60.0f, 20.0f);
     std::uniform_real_distribution<float> randRotation(0.0f, 3.0f);
     std::uniform_real_distribution<float> randScale(3.0f, 5.0f);
     std::uniform_real_distribution<float> randColor(0.0f, 1.0f);
@@ -103,7 +103,7 @@ int main(void) {
         entity = gCoordinator.CreateEntity();
 
         float gravity[3] = { 0.0f, randGravity(generator), 0.0f };
-        gCoordinator.AddComponent(entity, Gravity{ 0.0f, gravity[1] });
+        gCoordinator.AddComponent<Gravity>(entity, Gravity{ 0.0f, gravity[1] });
 
         float basevelocity[3] = { 0.0f, 0.0f, 0.0f };
         float baseacceleration[3] = { 0.0f, 0.0f, 0.0f };
@@ -125,6 +125,8 @@ int main(void) {
             }
          );
 
+        gCoordinator.AddComponent(entity, Renderable{ 0.0f, 0.0f, 0.0f });
+
     }
     
     float time = Time::getTime();
@@ -134,8 +136,9 @@ int main(void) {
 
         unsigned int input = window.ProcessEvents();
         controlSystem->Update(time, input);
-        physicsSystem->Update(time);
+
         renderSystem->Update(time);
+        physicsSystem->Update(time);
         
 
         window.Update();

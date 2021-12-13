@@ -14,9 +14,9 @@ void ControlSystem::Init() {
 
 void ControlSystem::Update(float dt, unsigned int input) {
 	for (auto& entity : m_Entities) {
-		auto transform = gCoordinator.GetComponent<Transform>(entity);
+		auto& transform = gCoordinator.GetComponent<Transform>(entity);
 
-		float speed = 200.0f;
+		float speed = 10.0f;
 
 		if (input == 1)
 		{
