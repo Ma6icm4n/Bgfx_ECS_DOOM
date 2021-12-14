@@ -103,7 +103,7 @@ int main(void) {
         entity = gCoordinator.CreateEntity();
 
         float gravity[3] = { 0.0f, randGravity(generator), 0.0f };
-        gCoordinator.AddComponent<Gravity>(entity, Gravity{ 0.0f, gravity[1] });
+        //gCoordinator.AddComponent<Gravity>(entity, Gravity{ 0.0f, gravity[1] });
 
         float basevelocity[3] = { 0.0f, 0.0f, 0.0f };
         float baseacceleration[3] = { 0.0f, 0.0f, 0.0f };
@@ -130,14 +130,15 @@ int main(void) {
     }
     
     float time = Time::getTime();
+    double xpos, ypos;
     while (!quit) {
 
         float time = Time::getTime();
 
-        unsigned int input = window.ProcessEvents();
-        controlSystem->Update(time, input);
+        unsigned int input = window.ProcessEvents(xpos, ypos);
+        controlSystem->Update(time, input, xpos, ypos);
 
-        renderSystem->Update(time);
+        renderSystem->Update(time, xpos, ypos);
         physicsSystem->Update(time);
         
 

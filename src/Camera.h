@@ -8,6 +8,7 @@
 struct Camera {
 	std::vector<float> projectionTransform;
     std::vector<float> forward;
+    std::vector<float> right;
 
     static std::vector<float> MakeProjectionTransform(float width, float height) {
         
@@ -27,6 +28,20 @@ struct Camera {
         forward[0] = Maths::cos(angleY) * Maths::sin(angleZ);
         forward[1] = -Maths::sin(angleY);
         forward[2] = Maths::cos(angleY) * Maths::cos(angleZ);
+        std::vector<float> forwardV(std::begin(forward), std::end(forward));
+        return forwardV;
+    }
+
+    static std::vector<float> GetRightVector(float rotationX, float rotationY, float rotationZ) {
+        float forward[3];
+
+        float angleY = Maths::toRadians(rotationY);
+        float angleX = Maths::toRadians(rotationX);
+        float angleZ = Maths::toRadians(rotationZ);
+
+        forward[0] = Maths::cos(angleZ);
+        forward[1] = 0;
+        forward[2] = -Maths::sin(angleZ);
         std::vector<float> forwardV(std::begin(forward), std::end(forward));
         return forwardV;
     }

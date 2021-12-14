@@ -85,6 +85,28 @@ bgfx::ShaderHandle loadShader(const char* filename) {
     return bgfx::createShader(mem);
 }
 
+void RenderSystem::GetForwardVector(float* forward, double& xpos, double& ypos, double zpos) {
+
+    float angleY = Maths::toRadians(ypos);
+    float angleX = Maths::toRadians(xpos);
+    float angleZ = Maths::toRadians(zpos);
+
+    forward[0] = Maths::cos(angleY) * Maths::sin(angleX); 
+    forward[1] = -Maths::sin(angleY);
+    forward[2] = Maths::cos(angleY) * Maths::cos(angleX);
+}
+
+void RenderSystem::GetRightVector(float* right, double& xpos, double& ypos, double zpos) {
+    float angleX = Maths::toRadians(xpos);
+    float angleY = Maths::toRadians(ypos);
+    float angleZ = Maths::toRadians(zpos);
+
+    right[0] = Maths::cos(angleX);
+    right[1] = 0;
+    right[2] = -Maths::sin(angleX);
+
+}
+
 #define WIND_WIDTH 1600
 #define WIND_HEIGHT 900
 
@@ -96,13 +118,13 @@ void RenderSystem::Init()
 
     m_camera = gCoordinator.CreateEntity();
 
-    float rotation[3] = { 0.0f, 60.0f, -40.0f };
+    float rotation[3] = { 0.0f, 0.0f, 0.0f };
 
     gCoordinator.AddComponent(
         m_camera,
         Transform{
-            0.0, 0.0f, -50.0f,
-            0.0f, 20.0f, -40.0f,
+            0.0, 0.0f, -80.0f,
+            0.0f, 0.0f, 0.0f,
             1.0f, 1.0f, 1.0f
         }
     );
@@ -111,7 +133,8 @@ void RenderSystem::Init()
         m_camera,
         Camera{
             .projectionTransform = Camera::MakeProjectionTransform(WIND_WIDTH, WIND_HEIGHT),
-            .forward = Camera::GetForwardVector(rotation[0], rotation[1], rotation[2])
+            .forward = Camera::GetForwardVector(rotation[0], rotation[1], rotation[2]),
+            .right = Camera::GetRightVector(rotation[0], rotation[1], rotation[2])
         }
     );
 
@@ -142,7 +165,7 @@ void RenderSystem::Destroy() {
     bgfx::destroy(program);
 }
 
-void RenderSystem::Update(float dt) {
+void RenderSystem::Update(float dt, double& xpos, double& ypos) {
 
 
     auto& cameraTransform = gCoordinator.GetComponent<Transform>(m_camera);
@@ -152,9 +175,20 @@ void RenderSystem::Update(float dt) {
 
         auto const& transform = gCoordinator.GetComponent<Transform>(entity);
         
-        const bx::Vec3 eye = { cameraTransform.position[0], cameraTransform.position[1], cameraTransform.position[2] };
+        
         //std::cout << cameraTransform.position[0] << " , " << cameraTransform.position[1] << " , " << cameraTransform.position[2] << std::endl;;
-        const bx::Vec3 at = { eye.x + camera.forward[0], eye.y  + camera.forward[1], eye.z + camera.forward[2] };
+        float forward[3] = { camera.forward[0], camera.forward[1], camera.forward[2] };
+        float right[3] = { camera.right[0], camera.right[1], camera.right[2] };
+        RenderSystem::GetForwardVector(forward, xpos, ypos, (double) cameraTransform.rotation[2]);
+        RenderSystem::GetRightVector(right, xpos, ypos, (double)cameraTransform.rotation[2]);
+        camera.forward[0] = forward[0];
+        camera.forward[1] = forward[1];
+        camera.forward[2] = forward[2];
+        camera.right[0] = right[0];
+        camera.right[1] = right[1];
+        camera.right[2] = right[2];
+        const bx::Vec3 eye = { cameraTransform.position[0], cameraTransform.position[1], cameraTransform.position[2] };
+        const bx::Vec3 at = { eye.x + forward[0], eye.y  + forward[1], eye.z + forward[2]};
         
         float view[16];
         view[2] = -cameraTransform.position[0];

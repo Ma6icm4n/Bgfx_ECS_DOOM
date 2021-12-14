@@ -60,9 +60,16 @@ void Window::Shutdown() {
 
 // ################### WINDOW EVENTS ######################
 
-unsigned int Window::ProcessEvents() {
+unsigned int Window::ProcessEvents(double& xpos, double& ypos) {
 	glfwPollEvents();
+	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	if(glfwRawMouseMotionSupported()) {
+		glfwSetInputMode(m_window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+	}
+	bool tried = true;
+	glfwGetCursorPos(m_window, &xpos, &ypos);
 	bool buttonStateChanged = true;
+	m_buttons = 0;
 
 	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE)) {
 		gCoordinator.SendEvent(Events::Window::QUIT);
@@ -93,6 +100,10 @@ unsigned int Window::ProcessEvents() {
 	}
 	else if (glfwGetKey(m_window, GLFW_MOUSE_BUTTON_LEFT)) {
 		m_buttons = 7;
+	}
+	if (tried) {
+		glfwGetCursorPos(m_window, &xpos, &ypos);
+
 	}
 	else
 	{

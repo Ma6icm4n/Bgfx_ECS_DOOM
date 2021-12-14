@@ -12,8 +12,10 @@ class RenderSystem : public System {
 public:
 
 	void Init();
-	void Update(float dt);
+	void Update(float dt, double& xpos, double& ypos);
     void Destroy();
+    void GetForwardVector(float* transform, double& xpos, double& ypos, double zpos);
+    void GetRightVector(float* transform, double& xpos, double& ypos, double zpos);
 private:
 
     //void WindowSizeListener(Event& event);

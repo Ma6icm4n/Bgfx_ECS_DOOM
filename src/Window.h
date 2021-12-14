@@ -18,7 +18,7 @@ public :
 	void Init(string const& windowTitle, unsigned int windowWidth, unsigned int windowHeight, unsigned int windowPositonX, unsigned int windowPositionY);
 
 	void Update();
-	unsigned int ProcessEvents();
+	unsigned int ProcessEvents(double& xpos, double& ypos);
 	void Shutdown();
 
 private:
