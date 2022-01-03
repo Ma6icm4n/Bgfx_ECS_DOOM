@@ -191,3 +191,5 @@ build/vs2019/obj/x86/Debug/Engine/Engine.ilk
 build/vs2019/obj/x86/Debug/Engine/Engine.log
 build/vs2019/obj/x86/Debug/Engine/vc142.pdb
 build/vs2019/.vs/ECS_DOOM/v16/ipch/AutoPCH/51fa819c3af07132/MAIN.ipch
+build/vs2019/.vs/ECS_DOOM/v16/ipch/AutoPCH/392b1421cfb03efd/MAIN.ipch
+build/vs2019/.vs/ECS_DOOM/v16/ipch/AutoPCH/a20ff78627a078d6/LEVELLOADER.ipch
