@@ -85,7 +85,7 @@ bgfx::ShaderHandle loadShader(const char* filename) {
     return bgfx::createShader(mem);
 }
 
-void RenderSystem::GetForwardVector(float* forward, double& xpos, double& ypos, double zpos) {
+void RenderSystem::GetForwardVector(float* forward, float xpos, float ypos, float zpos) {
 
     float angleY = Maths::toRadians(ypos);
     float angleX = Maths::toRadians(xpos);
@@ -96,7 +96,7 @@ void RenderSystem::GetForwardVector(float* forward, double& xpos, double& ypos, 
     forward[2] = Maths::cos(angleY) * Maths::cos(angleX);
 }
 
-void RenderSystem::GetRightVector(float* right, double& xpos, double& ypos, double zpos) {
+void RenderSystem::GetRightVector(float* right, float xpos, float ypos, float zpos) {
     float angleX = Maths::toRadians(xpos);
     float angleY = Maths::toRadians(ypos);
     float angleZ = Maths::toRadians(zpos);
@@ -123,7 +123,7 @@ void RenderSystem::Init()
     gCoordinator.AddComponent(
         m_camera,
         Transform{
-            0.0, 0.0f, -80.0f,
+            2.0, 1.0f, 10.0f,
             0.0f, 0.0f, 0.0f,
             1.0f, 1.0f, 1.0f
         }
@@ -165,7 +165,7 @@ void RenderSystem::Destroy() {
     bgfx::destroy(program);
 }
 
-void RenderSystem::Update(float dt, double& xpos, double& ypos) {
+void RenderSystem::Update(float dt) {
 
 
     auto& cameraTransform = gCoordinator.GetComponent<Transform>(m_camera);
@@ -179,8 +179,8 @@ void RenderSystem::Update(float dt, double& xpos, double& ypos) {
         //std::cout << cameraTransform.position[0] << " , " << cameraTransform.position[1] << " , " << cameraTransform.position[2] << std::endl;;
         float forward[3] = { camera.forward[0], camera.forward[1], camera.forward[2] };
         float right[3] = { camera.right[0], camera.right[1], camera.right[2] };
-        RenderSystem::GetForwardVector(forward, xpos, ypos, (double) cameraTransform.rotation[2]);
-        RenderSystem::GetRightVector(right, xpos, ypos, (double)cameraTransform.rotation[2]);
+        RenderSystem::GetForwardVector(forward, cameraTransform.rotation[0], cameraTransform.rotation[1], cameraTransform.rotation[2]);
+        RenderSystem::GetRightVector(right, cameraTransform.rotation[0], cameraTransform.rotation[1], cameraTransform.rotation[2]);
         camera.forward[0] = forward[0];
         camera.forward[1] = forward[1];
         camera.forward[2] = forward[2];
@@ -188,7 +188,7 @@ void RenderSystem::Update(float dt, double& xpos, double& ypos) {
         camera.right[1] = right[1];
         camera.right[2] = right[2];
         const bx::Vec3 eye = { cameraTransform.position[0], cameraTransform.position[1], cameraTransform.position[2] };
-        const bx::Vec3 at = { eye.x + forward[0], eye.y  + forward[1], eye.z + forward[2]};
+        const bx::Vec3 at = { eye.x + camera.forward[0], eye.y  + camera.forward[1], eye.z + camera.forward[2]};
         
         float view[16];
         view[2] = -cameraTransform.position[0];

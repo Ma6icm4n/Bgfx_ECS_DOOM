@@ -1,3 +1,5 @@
+#include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <cstdio>
 #include <vector>
@@ -72,7 +74,7 @@ int main(void) {
         gCoordinator.SetSystemSignature<ControlSystem>(signature);
     }
     controlSystem->Init();
-    
+
     auto renderSystem = gCoordinator.RegisterSystem<RenderSystem>();
     {
         Signature signature;
@@ -82,8 +84,8 @@ int main(void) {
     }
     renderSystem->Init();
 
-    
-    
+
+
     std::vector<Entity> entities(MAX_ENTITIES - 1);
 
     std::default_random_engine generator;
@@ -95,40 +97,146 @@ int main(void) {
 
     float scale = randScale(generator);
 
-    
 
-    for(auto & entity : entities) {
+    //######################## LEVEL LOADER #######################
+    std::ifstream file("../../assets/level.txt");
+    if (!file) {
+        std::cout << "File not found" << '\n';
+        std::cout << "../assets/level.h" << '\n';
 
-
-        entity = gCoordinator.CreateEntity();
-
-        float gravity[3] = { 0.0f, randGravity(generator), 0.0f };
-        //gCoordinator.AddComponent<Gravity>(entity, Gravity{ 0.0f, gravity[1] });
-
-        float basevelocity[3] = { 0.0f, 0.0f, 0.0f };
-        float baseacceleration[3] = { 0.0f, 0.0f, 0.0f };
-        gCoordinator.AddComponent(entity,
-             RigidBody{
-                *basevelocity,
-                *baseacceleration
-            }
-        );
-
-        float baseposition[3] = { randPosition(generator), randPosition(generator), randPosition(generator) };
-        float baserotation[3] = { randRotation(generator), randRotation(generator), randRotation(generator) };
-        float basescale[3] = { scale, scale, scale };
-        gCoordinator.AddComponent(entity,
-            Transform{
-                baseposition[0], baseposition[1], baseposition[2],
-                baserotation[0],baserotation[1], baserotation[2],
-                basescale[0], basescale[1], basescale[2]
-            }
-         );
-
-        gCoordinator.AddComponent(entity, Renderable{ 0.0f, 0.0f, 0.0f });
-
+        return 0;
     }
-    
+
+    float nbRow = 0;
+    float nbColumn = 0;
+    std::string line;
+
+    while (std::getline(file, line)) {
+        std::cout << "line" << " " << std::to_string(nbRow) << "\n";
+
+        for (std::string::iterator it = line.begin(); it != line.end(); ++it) {
+            std::cout << nbColumn << "\n";
+
+            switch (*it) {
+                case 'X':
+                {
+                    Entity wall = gCoordinator.CreateEntity();
+                    float basevelocity[3] = { 0.0f, 0.0f, 0.0f };
+                    float baseacceleration[3] = { 0.0f, 0.0f, 0.0f };
+                    gCoordinator.AddComponent(wall,
+                        RigidBody{
+                           *basevelocity,
+                           *baseacceleration
+                        }
+                    );
+
+                    float baseposition[3] = { nbColumn *2 , 0.0f, nbRow *2 };
+                    float baserotation[3] = { 0.0f, 0.0f, 0.0f };
+                    float basescale[3] = { 1.0f, 2.0f, 1.0f };
+                    gCoordinator.AddComponent(wall,
+                        Transform{
+                            baseposition[0], baseposition[1], baseposition[2],
+                            baserotation[0],baserotation[1], baserotation[2],
+                            basescale[0], basescale[1], basescale[2]
+                        }
+                    );
+
+                    gCoordinator.AddComponent(wall, Renderable{ 0.0f, 0.0f, 0.0f });
+
+
+
+                    Entity wall2 = gCoordinator.CreateEntity();
+                    float basevelocity2[3] = { 0.0f, 0.0f, 0.0f };
+                    float baseacceleration2[3] = { 0.0f, 0.0f, 0.0f };
+                    gCoordinator.AddComponent(wall2,
+                        RigidBody{
+                           *basevelocity2,
+                           *baseacceleration2
+                        }
+                    );
+
+                    float baseposition2[3] = { nbColumn * 2 , 0.20f, nbRow * 2 };
+                    float baserotation2[3] = { 0.0f, 0.0f, 0.0f };
+                    float basescale2[3] = { 1.0f, 2.0f, 1.0f };
+                    gCoordinator.AddComponent(wall2,
+                        Transform{
+                            baseposition2[0], baseposition2[1], baseposition2[2],
+                            baserotation2[0],baserotation2[1], baserotation2[2],
+                            basescale2[0], basescale2[1], basescale2[2]
+                        }
+                    );
+
+                    gCoordinator.AddComponent(wall2, Renderable{ 0.0f, 0.0f, 0.0f });
+                }
+                break;
+
+                case '/':
+                {
+                    Entity floor = gCoordinator.CreateEntity();
+                    float basevelocity[3] = { 0.0f, 0.0f, 0.0f };
+                    float baseacceleration[3] = { 0.0f, 0.0f, 0.0f };
+                    gCoordinator.AddComponent(floor,
+                        RigidBody{
+                           *basevelocity,
+                           *baseacceleration
+                        }
+                    );
+
+                    float baseposition[3] = { nbColumn * 2, -0.20f, nbRow * 2};
+                    float baserotation[3] = { 0.0f, 0.0f, 0.0f };
+                    float basescale[3] = { 1.0f, 1.0f, 1.0f };
+                    gCoordinator.AddComponent(floor,
+                        Transform{
+                            baseposition[0], baseposition[1], baseposition[2],
+                            baserotation[0],baserotation[1], baserotation[2],
+                            basescale[0], basescale[1], basescale[2]
+                        }
+                    );
+
+                    gCoordinator.AddComponent(floor, Renderable{ 0.0f, 0.0f, 0.0f });
+                }
+                break;
+            }
+            ++nbColumn;
+        }
+        std::cout << "\n";
+        ++nbRow;
+
+        nbColumn = 0;
+    }
+        /*
+        for(auto & entity : entities) {
+
+
+            entity = gCoordinator.CreateEntity();
+
+            float gravity[3] = { 0.0f, randGravity(generator), 0.0f };
+            //gCoordinator.AddComponent<Gravity>(entity, Gravity{ 0.0f, gravity[1] });
+
+            float basevelocity[3] = { 0.0f, 0.0f, 0.0f };
+            float baseacceleration[3] = { 0.0f, 0.0f, 0.0f };
+            gCoordinator.AddComponent(entity,
+                 RigidBody{
+                    *basevelocity,
+                    *baseacceleration
+                }
+            );
+
+            float baseposition[3] = { randPosition(generator), randPosition(generator), randPosition(generator) };
+            float baserotation[3] = { randRotation(generator), randRotation(generator), randRotation(generator) };
+            float basescale[3] = { scale, scale, scale };
+            gCoordinator.AddComponent(entity,
+                Transform{
+                    baseposition[0], baseposition[1], baseposition[2],
+                    baserotation[0],baserotation[1], baserotation[2],
+                    basescale[0], basescale[1], basescale[2]
+                }
+             );
+
+            gCoordinator.AddComponent(entity, Renderable{ 0.0f, 0.0f, 0.0f });
+
+        }*/
+
     float time = Time::getTime();
     double xpos, ypos;
     while (!quit) {
@@ -136,11 +244,11 @@ int main(void) {
         float time = Time::getTime();
 
         unsigned int input = window.ProcessEvents(xpos, ypos);
-        controlSystem->Update(time, input, xpos, ypos);
+        controlSystem->Update(input, xpos, ypos);
 
-        renderSystem->Update(time, xpos, ypos);
+        renderSystem->Update(time);
         physicsSystem->Update(time);
-        
+
 
         window.Update();
 

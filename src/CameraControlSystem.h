@@ -12,6 +12,4 @@ public:
 
 private:
 	std::bitset<8> m_buttons;
-
-	void InputListener(Event& event);
 };
