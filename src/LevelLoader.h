@@ -67,7 +67,7 @@ void LevelLoader() {
 	renderSystem->Init();
 
 
-	std::ifstream file("../../assets/level.txt");
+	/*std::ifstream file("../../assets/level.txt");
 	if (!file) {
 		std::cout << "File not found" << '\n';
 		std::cout << "../assets/level.h" << '\n';
@@ -113,5 +113,5 @@ void LevelLoader() {
 		}
 		std::cout << "\n";
 		++nbRow;
-	}
+	}*/
 }

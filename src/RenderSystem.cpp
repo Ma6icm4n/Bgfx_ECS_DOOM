@@ -5,6 +5,7 @@
 #include "Coordinator.h"
 #include "Camera.h"
 #include "Transform.h"
+#include "Collision.h"
 
 #include <cmath>
 
@@ -56,14 +57,14 @@ bgfx::ShaderHandle loadShader(const char* filename) {
 
     switch (bgfx::getRendererType()) {
     case bgfx::RendererType::Noop:
-    case bgfx::RendererType::Direct3D9:  shaderPath = "../../externals/bgfx/examples/runtime/shaders/dx9/";   break;
+    case bgfx::RendererType::Direct3D9:  shaderPath = "../../assets/";   break;
     case bgfx::RendererType::Direct3D11:
-    case bgfx::RendererType::Direct3D12: shaderPath = "../../externals/bgfx/examples/runtime/shaders/dx11/";  break;
-    case bgfx::RendererType::Gnm:        shaderPath = "../../externals/bgfx/examples/runtime/shaders/pssl/";  break;
-    case bgfx::RendererType::Metal:      shaderPath = "../../externals/bgfx/examples/runtime/shaders/metal/"; break;
-    case bgfx::RendererType::OpenGL:     shaderPath = "../../externals/bgfx/examples/runtime/shaders/glsl/";  break;
-    case bgfx::RendererType::OpenGLES:   shaderPath = "../../externals/bgfx/examples/runtime/shaders/essl/";  break;
-    case bgfx::RendererType::Vulkan:     shaderPath = "../../externals/bgfx/examples/runtime/shaders/spirv/"; break;
+    case bgfx::RendererType::Direct3D12: shaderPath = "../../assets/";  break; // add ../ 3 pour le build
+    case bgfx::RendererType::Gnm:        shaderPath = "../../assets/";  break;
+    case bgfx::RendererType::Metal:      shaderPath = "../../assets/"; break;
+    case bgfx::RendererType::OpenGL:     shaderPath = "../../assets/";  break;
+    case bgfx::RendererType::OpenGLES:   shaderPath = "../../assets/";  break;
+    case bgfx::RendererType::Vulkan:     shaderPath = "../../assets/"; break;
     }
 
     size_t shaderLen = strlen(shaderPath);
@@ -119,11 +120,13 @@ void RenderSystem::Init()
     m_camera = gCoordinator.CreateEntity();
 
     float rotation[3] = { 0.0f, 0.0f, 0.0f };
+    float position[3] = { 2.0, 1.0, 10.0f };
+    float scale[3] = { 0.5, 0.5, 0.5 };
 
     gCoordinator.AddComponent(
         m_camera,
         Transform{
-            2.0, 1.0f, 10.0f,
+            6.0, 2.0f, 10.0f,
             0.0f, 0.0f, 0.0f,
             1.0f, 1.0f, 1.0f
         }
@@ -135,6 +138,15 @@ void RenderSystem::Init()
             .projectionTransform = Camera::MakeProjectionTransform(WIND_WIDTH, WIND_HEIGHT),
             .forward = Camera::GetForwardVector(rotation[0], rotation[1], rotation[2]),
             .right = Camera::GetRightVector(rotation[0], rotation[1], rotation[2])
+        }
+    );
+
+    gCoordinator.AddComponent(
+        m_camera,
+        Collision{
+            .Max = Collision::GetMax(position, scale),
+            .Min = Collision::GetMin(position, scale)
+
         }
     );
 

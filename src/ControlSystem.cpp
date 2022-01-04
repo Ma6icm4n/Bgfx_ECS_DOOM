@@ -24,7 +24,7 @@ void ControlSystem::Update(unsigned int input, double& xpos, double& ypos) {
 		if (input == 1)
 		{
 			transform.position[0] += camera.forward[0] *  speed;
-			//transform.position[1] += camera.forward[1] *  speed;
+			transform.position[1] += camera.forward[1] *  speed;
 			transform.position[2] += camera.forward[2] *  speed;
 		}
 		else if (input == 2)
@@ -38,7 +38,7 @@ void ControlSystem::Update(unsigned int input, double& xpos, double& ypos) {
 		if (input == 3)
 		{
 			transform.position[0] -= camera.forward[0] * speed;
-			//transform.position[1] -= camera.forward[1] * speed;
+			transform.position[1] -= camera.forward[1] * speed;
 			transform.position[2] -= camera.forward[2] * speed;
 		}
 		else if (input == 4)
@@ -62,7 +62,7 @@ void ControlSystem::Update(unsigned int input, double& xpos, double& ypos) {
 		transform.rotation[0] = (xpos /10);
 
 
-		//transform.rotation[1] = (ypos /10);
+		transform.rotation[1] = (ypos /10);
 
 		
 	}

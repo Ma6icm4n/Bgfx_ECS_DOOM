@@ -20,7 +20,7 @@ constexpr std::uint32_t operator "" _hash(char const* s, std::size_t count) {
 //Entity alias as an id
 using Entity = std::uint32_t;
 //Max Entity alias in your Program size of the array
-const Entity MAX_ENTITIES = 5000  ;
+const Entity MAX_ENTITIES = 30000  ;
 
 //Component unique ID
 using ComponentType = std::uint8_t;

@@ -10,11 +10,15 @@
 #include "RigidBody.h"
 #include "Transform.h"
 #include "Renderable.h"
+#include "Camera.h"
+#include "Collision.h"
+
 #include "Coordinator.h"
 #include "PhysicSystem.h"
 #include "RenderSystem.h"
 #include "ControlSystem.h"
-#include "Camera.h"
+#include "CollisionSystem.h"
+
 #include "Time.h"
 #include <chrono>
 #include <random>
@@ -54,6 +58,7 @@ int main(void) {
     gCoordinator.RegisterComponent<Transform>();
     gCoordinator.RegisterComponent<Renderable>();
     gCoordinator.RegisterComponent<Camera>();
+    gCoordinator.RegisterComponent<Collision>();
 
     auto physicsSystem = gCoordinator.RegisterSystem<PhysicsSystem>();
     {
@@ -75,6 +80,15 @@ int main(void) {
     }
     controlSystem->Init();
 
+    auto collisionSystem = gCoordinator.RegisterSystem<CollisionSystem>();
+    {
+        Signature signature;
+        signature.set(gCoordinator.GetComponentType<Transform>());
+        signature.set(gCoordinator.GetComponentType<Collision>());
+        gCoordinator.SetSystemSignature <CollisionSystem>(signature);
+    }
+    collisionSystem->Init();
+
     auto renderSystem = gCoordinator.RegisterSystem<RenderSystem>();
     {
         Signature signature;
@@ -83,6 +97,8 @@ int main(void) {
         gCoordinator.SetSystemSignature<RenderSystem>(signature);
     }
     renderSystem->Init();
+
+    
 
 
 
@@ -99,7 +115,7 @@ int main(void) {
 
 
     //######################## LEVEL LOADER #######################
-    std::ifstream file("../../assets/level.txt");
+   /* std::ifstream file("../../assets/level.txt");
     if (!file) {
         std::cout << "File not found" << '\n';
         std::cout << "../assets/level.h" << '\n';
@@ -138,6 +154,15 @@ int main(void) {
                             baseposition[0], baseposition[1], baseposition[2],
                             baserotation[0],baserotation[1], baserotation[2],
                             basescale[0], basescale[1], basescale[2]
+                        }
+                    );
+
+                    gCoordinator.AddComponent(
+                        wall,
+                        Collision{
+                            .Max = Collision::GetMax(baseposition, basescale),
+                            .Min = Collision::GetMin(baseposition, basescale)
+
                         }
                     );
 
@@ -203,8 +228,8 @@ int main(void) {
         ++nbRow;
 
         nbColumn = 0;
-    }
-        /*
+    }*/
+        
         for(auto & entity : entities) {
 
 
@@ -235,7 +260,7 @@ int main(void) {
 
             gCoordinator.AddComponent(entity, Renderable{ 0.0f, 0.0f, 0.0f });
 
-        }*/
+        }
 
     float time = Time::getTime();
     double xpos, ypos;
@@ -244,9 +269,13 @@ int main(void) {
         float time = Time::getTime();
 
         unsigned int input = window.ProcessEvents(xpos, ypos);
-        controlSystem->Update(input, xpos, ypos);
 
+        collisionSystem->Update(time);
+
+        controlSystem->Update(input, xpos, ypos);
+        
         renderSystem->Update(time);
+        
         physicsSystem->Update(time);
 
 
