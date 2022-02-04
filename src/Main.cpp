@@ -115,7 +115,7 @@ int main(void) {
 
 
     //######################## LEVEL LOADER #######################
-   /* std::ifstream file("../../assets/level.txt");
+   std::ifstream file("../../assets/level.txt");
     if (!file) {
         std::cout << "File not found" << '\n';
         std::cout << "../assets/level.h" << '\n';
@@ -228,15 +228,15 @@ int main(void) {
         ++nbRow;
 
         nbColumn = 0;
-    }*/
+    }
         
-        for(auto & entity : entities) {
+     /*   for (auto& entity : entities) {
 
 
             entity = gCoordinator.CreateEntity();
 
             float gravity[3] = { 0.0f, randGravity(generator), 0.0f };
-            //gCoordinator.AddComponent<Gravity>(entity, Gravity{ 0.0f, gravity[1] });
+            gCoordinator.AddComponent<Gravity>(entity, Gravity{ 0.0f, gravity[1] });
 
             float basevelocity[3] = { 0.0f, 0.0f, 0.0f };
             float baseacceleration[3] = { 0.0f, 0.0f, 0.0f };
@@ -259,8 +259,8 @@ int main(void) {
              );
 
             gCoordinator.AddComponent(entity, Renderable{ 0.0f, 0.0f, 0.0f });
-
-        }
+            
+        }*/
 
     float time = Time::getTime();
     double xpos, ypos;
@@ -276,7 +276,7 @@ int main(void) {
         
         renderSystem->Update(time);
         
-        physicsSystem->Update(time);
+       //physicsSystem->Update(time);
 
 
         window.Update();

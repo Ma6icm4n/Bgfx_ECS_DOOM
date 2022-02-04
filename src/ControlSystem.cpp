@@ -24,13 +24,13 @@ void ControlSystem::Update(unsigned int input, double& xpos, double& ypos) {
 		if (input == 1)
 		{
 			transform.position[0] += camera.forward[0] *  speed;
-			transform.position[1] += camera.forward[1] *  speed;
+			//transform.position[1] += camera.forward[1] *  speed;
 			transform.position[2] += camera.forward[2] *  speed;
 		}
 		else if (input == 2)
 		{
 			transform.position[0] -= camera.right[0] * speed;
-			transform.position[1] -= camera.right[1] * speed;
+			//transform.position[1] -= camera.right[1] * speed;
 			transform.position[2] -= camera.right[2] * speed;
 		}
 
@@ -38,13 +38,13 @@ void ControlSystem::Update(unsigned int input, double& xpos, double& ypos) {
 		if (input == 3)
 		{
 			transform.position[0] -= camera.forward[0] * speed;
-			transform.position[1] -= camera.forward[1] * speed;
+			//transform.position[1] -= camera.forward[1] * speed;
 			transform.position[2] -= camera.forward[2] * speed;
 		}
 		else if (input == 4)
 		{
 			transform.position[0] += camera.right[0] * speed;
-			transform.position[1] += camera.right[1] * speed;
+			//transform.position[1] += camera.right[1] * speed;
 			transform.position[2] += camera.right[2] * speed;
 		}
 

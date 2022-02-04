@@ -54,7 +54,7 @@ public:
 
 		assert(m_entityToIndexMap.find(entity) != m_entityToIndexMap.end() && "Retrieving non-existant component");
 
-		return m_componentArray[m_entityToIndexMap[entity]];
+		return m_componentArray.at(m_entityToIndexMap.at(entity));
 
 	}
 	//Remove Data from the array component where the entity is destroyed
