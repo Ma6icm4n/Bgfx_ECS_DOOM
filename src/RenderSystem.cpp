@@ -108,6 +108,24 @@ void RenderSystem::GetRightVector(float* right, float xpos, float ypos, float zp
 
 }
 
+void RenderSystem::GetMax(float* position, float* scale, float* max) {
+    max[0] = position[0] - scale[0] > position[0] + scale[0] ?
+        position[0] - scale[0] : position[0] + scale[0];
+    max[1] = position[1] - scale[1] > position[1] + scale[1] ?
+        position[1] - scale[1] : position[1] + scale[1];
+    max[2] = position[2] - scale[2] > position[2] + scale[2] ?
+        position[2] - scale[2] : position[2] + scale[2];
+}
+
+void RenderSystem::GetMin(float* position, float* scale, float* min) {
+    min[0] = position[0] - scale[0] < position[0] + scale[0] ?
+        position[0] - scale[0] : position[0] + scale[0];
+    min[1] = position[1] - scale[1] < position[1] + scale[1] ?
+        position[1] - scale[1] : position[1] + scale[1];
+    min[2] = position[2] - scale[2] < position[2] + scale[2] ?
+        position[2] - scale[2] : position[2] + scale[2];
+}
+
 #define WIND_WIDTH 1600
 #define WIND_HEIGHT 900
 
@@ -182,6 +200,8 @@ void RenderSystem::Update(float dt) {
 
     auto& cameraTransform = gCoordinator.GetComponent<Transform>(m_camera);
     auto& camera = gCoordinator.GetComponent<Camera>(m_camera);
+    auto& cameraCollision = gCoordinator.GetComponent<Collision>(m_camera);
+    float oldPosition[3] = { cameraTransform.position[0], cameraTransform.position[1], cameraTransform.position[2] };
 
     for (auto const& entity : m_Entities) {
 
@@ -202,6 +222,22 @@ void RenderSystem::Update(float dt) {
         const bx::Vec3 eye = { cameraTransform.position[0], cameraTransform.position[1], cameraTransform.position[2] };
         const bx::Vec3 at = { eye.x + camera.forward[0], eye.y  + camera.forward[1], eye.z + camera.forward[2]};
         
+        float Max[3] = { cameraCollision.Max[0], cameraCollision.Max[1], cameraCollision.Max[2] };
+        float Min[3] = { cameraCollision.Min[0], cameraCollision.Min[1], cameraCollision.Min[2] };
+        float position[3] = { cameraTransform.position[0], cameraTransform.position[1], cameraTransform.position[2] };
+        float scaleCam[3] = { cameraTransform.scale[0], cameraTransform.scale[1], cameraTransform.scale[2] };
+        RenderSystem::GetMax(position, scaleCam, Max);
+        RenderSystem::GetMin(position, scaleCam, Min);
+        cameraCollision.Max[0] = Max[0];
+        cameraCollision.Max[1] = Max[1];
+        cameraCollision.Max[2] = Max[2];
+        cameraCollision.Min[0] = Min[0];
+        cameraCollision.Min[1] = Min[1];
+        cameraCollision.Min[2] = Min[2];
+        
+        /*std::cout << "Camera Hitboxes : " << std::endl;
+        std::cout << Max[0] << " " << Max[1] << " " << Max[2] << std::endl;
+        std::cout << Min[0] << " " << Min[2] << " " << Min[2] << std::endl;*/
         float view[16];
         view[2] = -cameraTransform.position[0];
         view[5] = -cameraTransform.position[1];

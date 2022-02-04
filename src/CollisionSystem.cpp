@@ -14,13 +14,16 @@ void CollisionSystem::Init() {}
 
 void CollisionSystem::Update(float dt) {
 
-	auto& cameraTransform = gCoordinator.GetComponent<Transform>(m_camera);
+	/*auto& cameraTransform = gCoordinator.GetComponent<Transform>(m_camera);
 
 	float oldCameraPosition[3] = { cameraTransform.position[0], cameraTransform.position[1], cameraTransform.position[2] };
-	auto& cameraCollision = gCoordinator.GetComponent<Collision>(m_camera);
+	auto& cameraCollision = gCoordinator.GetComponent<Collision>(m_camera);*/
 
 	for (auto const& entity : m_Entities) {
 		auto const& collisionBox = gCoordinator.GetComponent<Collision>(entity);
+		auto& cameraTransform = gCoordinator.GetComponent<Transform>(m_camera);
+		float oldCameraPosition[3] = { cameraTransform.position[0], cameraTransform.position[1], cameraTransform.position[2] };
+		auto& cameraCollision = gCoordinator.GetComponent<Collision>(m_camera);
 		if (&collisionBox == &cameraCollision) {
 			continue;
 		}
